@@ -1,4 +1,23 @@
+@import url('./crt.css');
+
+/* Fonts */
+
+@font-face {
+  font-family: 'Departure Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Departure Mono Regular'), local('DepartureMono-Regular'),
+    url('/DepartureMono-Regular.woff2') format('woff2');
+
+}
+
 :root {
+
+  /* Fonts */
+  --font-family: 'Departure Mono', sans-serif;
+  --font-size: 16px;
+
+
   /* Catppuccin Latte */
   --rosewater: #dc8a78;
   --flamingo: #dd7878;
@@ -30,6 +49,17 @@
 
 html {
   background-color: var(--base);
+
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  color: var(--text);
+}
+
+h1 {
+  text-shadow: rgba(0, 0, 0, 0.3) 0px 2px 4px,
+    rgba(0, 0, 0, 0.2) 0px 7px 13px -3px,
+    rgba(0, 0, 0, 0.1) 0px -3px 0px inset;
+
 }
 
 h1,
@@ -38,5 +68,44 @@ h3,
 h4,
 h5,
 h6 {
+  margin: 0;
   color: var(--yellow);
+}
+
+.button:disabled {
+  color: var(--subtext0);
+}
+
+.button {
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 4px,
+    rgba(0, 0, 0, 0.2) 0px 7px 13px -3px,
+    rgba(0, 0, 0, 0.1) 0px -3px 0px inset;
+  border-radius: 0.5em;
+  background-color: var(--surface1);
+  padding: 1em;
+  border: none;
+}
+
+.button:active:not(:disabled) {
+  box-shadow: none;
+  transform: translate(0.2em, 0.2em);
+
+}
+
+.button:not(:active) {
+  transition: all 400ms ease-in-out;
+}
+
+
+.box {
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 4px,
+    rgba(0, 0, 0, 0.2) 0px 7px 13px -3px,
+    rgba(0, 0, 0, 0.1) 0px -3px 0px inset;
+
+  border-radius: 0.5em;
+
+  background-color: var(--surface0);
+
+  padding: 1em;
+
 }
