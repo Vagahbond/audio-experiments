@@ -1,9 +1,25 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+
 	const { title, message } = $props();
+
+	let currentUrl = $state('');
+
+	onMount(() => {
+		currentUrl = window.location.href;
+	});
 </script>
 
 <div class="snail-container">
 	<div class="snail-text box">
+		<div class="links">
+			<a class="button" target="_blank" href={`https://github.com/vagahbond/audio-experiments`}
+				>Rust code</a
+			>
+			<a class="button" target="_blank" href={`https://github.com/vagahbond/audio-experiments`}
+				>Svelte code
+			</a>
+		</div>
 		<h2>{title}</h2>
 		<p>{message}</p>
 	</div>
@@ -45,6 +61,18 @@
 		margin: 0 1em 1em 1em;
 		width: 100%;
 		position: relative;
+	}
+
+	.links {
+		width: 100%;
+		display: flex;
+		justify-content: end;
+	}
+
+	.links a {
+		margin-left: 1em;
+		text-decoration: none;
+		color: var(--text);
 	}
 
 	.snail-text h2 {
