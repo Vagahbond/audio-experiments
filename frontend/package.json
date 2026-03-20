@@ -41,6 +41,6 @@
 		"vitest-browser-svelte": "^2.0.2"
 	},
 	"dependencies": {
-		"audio-experiment": "file:../wasm/pkg"
+		"midi2freq": "file:../wasm/pkg/midi2freq"
 	}
 }

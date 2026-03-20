@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Snailwisdom from '$lib/components/snailwisdom.svelte';
-	import { greet } from 'audio-experiment';
 </script>
 
 <div class="container">

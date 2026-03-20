@@ -1,7 +1,5 @@
 <script lang="ts">
-	interface MidiEvent {
-		key: number;
-	}
+	import type { MidiEvent } from '$lib/midi';
 
 	interface PianoProps {
 		onKeyDown: (event: MidiEvent) => void;
@@ -17,9 +15,9 @@
 	function keyDown(index: number) {
 		const key = index + 12 * octave;
 
-    if (key >= 0 && key <= 127) {
-      onKeyDown({ key });
-    }
+		if (key >= 0 && key <= 127) {
+			onKeyDown({ key });
+		}
 	}
 </script>
 
@@ -73,6 +71,7 @@
 	.piano {
 		margin: 1em;
 		width: min-content;
+		background-color: var(--overlay0);
 	}
 
 	.controls {
@@ -82,10 +81,10 @@
 
 	.keys {
 		height: 10em;
-		background-color: var(--surface1);
+		background-color: var(--surface2);
 		border-radius: 0.5em 0.5em 0 0;
 		overflow: hidden;
-		border-top: 3px solid var(--surface1);
+		border-top: 3px solid var(--surface2);
 
 		display: flex;
 		flex-direction: row;

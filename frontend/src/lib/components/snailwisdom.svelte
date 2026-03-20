@@ -55,9 +55,9 @@
 	.snail-text:before {
 		content: ' ';
 		position: absolute;
-		width: 3em;
+		width: 2em;
 		height: 0.5em;
-		right: -3em;
+		right: -2em;
 	}
 	.snail-text:after {
 		bottom: 6em;

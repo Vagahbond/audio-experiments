@@ -1,9 +1,30 @@
 <script lang="ts">
 	import Piano from '$lib/components/piano.svelte';
 	import Snailwisdom from '$lib/components/snailwisdom.svelte';
+	import type { MidiEvent } from '$lib/midi';
+	import { midi_to_freq } from 'midi2freq';
+
+	let frequency = $state<undefined | number>(undefined);
+
+	function onKeyDown(event: MidiEvent) {
+		// round to 2 decimals
+		frequency = Math.round(midi_to_freq(event.key) * 100) / 100;
+	}
 </script>
 
-<Piano onKeyDown={(k) => alert(k.key)}></Piano>
+<div class="container box">
+	<h3>Midi to frequency</h3>
+	<div class="piano-container">
+		<Piano {onKeyDown}></Piano>
+	</div>
+	<div class="output box">
+		{#if frequency !== undefined}
+			<p>Frequency: {frequency}hz</p>
+		{:else}
+			<p>Press a key on the piano to see the frequency of the note !</p>
+		{/if}
+	</div>
+</div>
 
 <Snailwisdom
 	title="Midi to frequency !"
@@ -19,3 +40,20 @@
     Press a key on the piano to see the frequency of the note !
   `}
 />
+
+<style>
+	.container {
+		margin: 1em;
+		padding: 1em;
+	}
+	.output {
+		margin: 1em;
+	}
+
+	.piano-container {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+</style>

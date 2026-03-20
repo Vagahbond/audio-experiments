@@ -1,0 +1,13 @@
+[package]
+name = "core"
+version = "0.1.0"
+authors = ["vagahbond <vagahbond@pm.me>"]
+description = "Core library for my audio experiments"
+license = "MIT/Apache-2.0"
+repository = "https://github.com/vagahbond/audio-experiments"
+edition = "2024"
+
+[lib]
+
+
+
