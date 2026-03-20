@@ -42,10 +42,6 @@
 />
 
 <style>
-	.container {
-		margin: 1em;
-		padding: 1em;
-	}
 	.output {
 		margin: 1em;
 	}

@@ -10,6 +10,10 @@
 				<h5>Midi to frequency</h5>
 				<p>Transform a midi note's index into a frequency.</p></a
 			>
+			<a class="card box" href="/experiments/js-sine">
+				<h5>Pure JS audio generation</h5>
+				<p>Generate a sine wave with pure JS.</p>
+			</a>
 		</div>
 	</div>
 </div>
