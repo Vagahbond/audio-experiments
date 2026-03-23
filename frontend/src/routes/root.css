@@ -82,9 +82,11 @@ h6 {
     rgba(0, 0, 0, 0.1) 0px -3px 0px inset;
   border-radius: 0.5em;
   background-color: var(--surface1);
-  padding: 1em;
+  padding: 0.5em;
   border: none;
+  font-family: var(--font-family);
 }
+
 
 .button:active:not(:disabled) {
   box-shadow: none;

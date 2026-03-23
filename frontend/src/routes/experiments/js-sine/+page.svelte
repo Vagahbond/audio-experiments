@@ -60,6 +60,7 @@
 </div>
 
 <Snailwisdom
+	noRustCode
 	title="Pure JS audio generation !"
 	message={`This is a simple example of how to generate audio using pure JS. 
     It uses the Web Audio API to create a GainNode that can be used to control the volume of the audio.

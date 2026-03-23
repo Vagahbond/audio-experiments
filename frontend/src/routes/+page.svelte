@@ -19,6 +19,8 @@
 </div>
 
 <Snailwisdom
+	noSvelteCode={true}
+	noRustCode={true}
 	title="Hello, welcome to my audio experiment stash! 🎵"
 	message={`I'm vagahbond's pet snail Sacagot, and I will make sense of what is happening on this website through the different pages !\n
     This website is a playground for me to experiment with audio and web technologies.

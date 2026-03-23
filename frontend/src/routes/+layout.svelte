@@ -9,7 +9,7 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<h1 class="title box crt">Vagahbond's music experiments stash</h1>
+<a href="/"><h1 class="title box crt">Vagahbond's music experiments stash</h1> </a>
 {@render children()}
 
 <style>
@@ -17,5 +17,10 @@
 		text-align: center;
 		color: var(--base);
 		background-color: var(--text);
+		text-decoration: none;
+	}
+
+	a {
+		text-decoration: none;
 	}
 </style>
