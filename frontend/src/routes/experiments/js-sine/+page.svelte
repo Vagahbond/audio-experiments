@@ -1,8 +1,10 @@
 <script lang="ts">
+	import Rack from '$lib/components/control-rack/rack.svelte';
+	import Rackslot from '$lib/components/control-rack/rackslot.svelte';
 	import Snailwisdom from '$lib/components/snailwisdom.svelte';
 	import { onMount } from 'svelte';
 
-	let osc: OscillatorNode | undefined;
+	let osc: OscillatorNode | undefined = $state();
 
 	let context: AudioContext | undefined = $state();
 
@@ -10,12 +12,19 @@
 
 	let playState = $state(false);
 
+	let oscShape: OscillatorType = $state('sine');
+
 	onMount(() => {
 		context = new AudioContext();
+		context.suspend();
 
 		osc = context.createOscillator();
+		osc.frequency.value = 20;
 
 		gainNode = context.createGain();
+		gainNode.gain.value = 0.5;
+
+		osc.connect(gainNode);
 
 		gainNode.connect(context.destination);
 
@@ -23,12 +32,12 @@
 	});
 
 	function play() {
-		if (gainNode) osc?.connect(gainNode);
+		context?.resume();
 		playState = true;
 	}
 
 	function stop() {
-		if (gainNode) osc?.disconnect(gainNode);
+		context?.suspend();
 		playState = false;
 	}
 
@@ -43,42 +52,79 @@
 		if (!osc) {
 			return;
 		}
-		osc.frequency.value = value;
+		// exponential input
+		osc.frequency.value = 20 + Math.pow(15980, Math.pow(value / 100, 0.5));
+		console.log(osc.frequency.value);
+	}
+
+	function setShape(shape: OscillatorType) {
+		if (!osc) {
+			return;
+		}
+		osc.type = shape;
+		oscShape = shape;
 	}
 </script>
 
 <div class="container box">
 	<h3>Pure JS audio generation</h3>
 	<div class="controls">
-		<button disabled={playState} onclick={play} class="button">Play</button>
-		<button disabled={!playState} onclick={stop} class="button">Stop</button>
-		<!-- volume slider -->
-		<span>Volume</span>
-		<input
-			id="volume"
-			class="slider"
-			type="range"
-			min="0.0"
-			max="3.0"
-			step="0.01"
-			defaultvalue="1.0"
-			oninput={(event: any) => {
-				changeVolume(event.target.valueAsNumber);
-			}}
-		/>
-		<span>Frequency</span>
-		<input
-			id="frequency"
-			class="slider"
-			type="range"
-			min="20"
-			max="16000"
-			step="1"
-			defaultvalue="440"
-			oninput={(event: any) => {
-				changeFrequency(event.target.valueAsNumber);
-			}}
-		/>
+		<Rack label="Sine controls">
+			<Rackslot label="Play/Stop">
+				<button disabled={playState} onclick={play} class="button">Play</button>
+				<button disabled={!playState} onclick={stop} class="button">Stop</button>
+			</Rackslot>
+			<Rackslot label="Volume">
+				<input
+					id="volume"
+					class="slider"
+					type="range"
+					min="0.0"
+					max="3.0"
+					step="0.01"
+					defaultValue="0.5"
+					oninput={(event: any) => {
+						changeVolume(event.target.valueAsNumber);
+					}}
+				/>
+			</Rackslot>
+			<Rackslot label="Frequency">
+				<input
+					id="frequency"
+					class="slider"
+					type="range"
+					min="0"
+					max="100"
+					step="1"
+					defaultValue="1"
+					oninput={(event: any) => {
+						changeFrequency(event.target.valueAsNumber);
+					}}
+				/>
+			</Rackslot>
+			<Rackslot label="Shape">
+				<button onclick={() => setShape('sine')} class="button" disabled={oscShape === 'sine'}>
+					Sine
+				</button>
+				<button
+					onclick={() => setShape('triangle')}
+					class="button"
+					disabled={oscShape === 'triangle'}
+				>
+					Triangle
+				</button>
+				<button
+					onclick={() => setShape('sawtooth')}
+					class="button"
+					disabled={oscShape === 'sawtooth'}
+				>
+					Sawtooth
+				</button>
+				<button onclick={() => setShape('square')} class="button" disabled={oscShape === 'square'}>
+					Square
+				</button>
+			</Rackslot>
+		</Rack>
 	</div>
 </div>
 
@@ -99,4 +145,10 @@
 		margin: 1em;
 	}
 
+	.controls {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: space-around;
+	}
 </style>

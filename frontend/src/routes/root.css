@@ -77,15 +77,18 @@ h6 {
 /*****************************************************************************/
 
 .button:disabled {
+  box-shadow: none;
+  transform: translate(2px, 2px);
   color: var(--subtext0);
 }
+
 
 .button {
   box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 4px,
     rgba(0, 0, 0, 0.2) 0px 7px 13px -3px,
-    rgba(0, 0, 0, 0.1) 0px -3px 0px inset;
+    rgba(0, 0, 0, 0.1) -2px -2px 0px inset;
   border-radius: 0.5em;
-  background-color: var(--surface1);
+  background-color: var(--surface0);
   padding: 0.5em;
   border: none;
   font-family: var(--font-family);
@@ -111,7 +114,7 @@ h6 {
 .box {
   box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 4px,
     rgba(0, 0, 0, 0.2) 0px 7px 13px -3px,
-    rgba(0, 0, 0, 0.1) 0px -3px 0px inset;
+    rgba(0, 0, 0, 0.1) -2px -2px 0px inset;
 
   border-radius: 0.5em;
 
@@ -130,7 +133,7 @@ h6 {
   outline: none;
   /* border: 5px solid lawngreen; */
   border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.8) 0px 3px 3px inset;
+  box-shadow: rgba(0, 0, 0, 0.8) 3px 3px 3px inset;
 
 }
 
@@ -141,14 +144,14 @@ h6 {
   appearance: none;
   width: 1em;
   height: 2em;
-  background: var(--surface1);
+  background: var(--surface2);
   cursor: pointer;
   border: none;
   /* border: 5px solid lawngreen; */
   border-radius: 4px;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 4px,
     rgba(0, 0, 0, 0.2) 0px 7px 13px -3px,
-    rgba(0, 0, 0, 0.1) 0px -3px 0px inset;
+    rgba(0, 0, 0, 0.1) -2px -2px 0px inset;
 }
 
 /* for firefox */
@@ -156,13 +159,13 @@ h6 {
   border: none;
   width: 1em;
   height: 2em;
-  background: var(--surface1);
+  background: var(--surface2);
   cursor: pointer;
   /* border: 5px solid lawngreen; */
   border-radius: 4px;
   box-shadow: rgba(0, 0, 0, 0.3) 1px 2px 4px,
     rgba(0, 0, 0, 0.2) 0px 7px 13px -3px,
-    rgba(0, 0, 0, 0.1) 0px -3px 0px inset;
+    rgba(0, 0, 0, 0.1) -2px -2px 0px inset;
 
 
 }

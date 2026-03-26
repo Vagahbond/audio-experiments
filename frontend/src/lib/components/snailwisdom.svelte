@@ -18,14 +18,26 @@
 
 	let currentUrl = $state('');
 
+	let writtenText = $state('');
+
 	let rustCode = $derived(`${baseWasmUrl}/${currentUrl}`);
 
 	let svelteCode = $derived(`${baseFrontendUrl}/${currentUrl}`);
 
 	let reduced = $state(false);
 
+	function writeChar() {
+		setTimeout(() => {
+			writtenText = writtenText + message[writtenText.length];
+			if (writtenText.length < message.length) {
+				writeChar();
+			}
+		}, 20);
+	}
+
 	onMount(() => {
 		currentUrl = window.location.href.split('/').pop() ?? '';
+		writeChar();
 	});
 </script>
 
@@ -44,7 +56,7 @@
 				<button class="button close" onclick={(_) => (reduced = true)}> x </button>
 			</div>
 		</div>
-		<p>{message}</p>
+		<p>{writtenText}</p>
 	</div>
 	<div class="snail">
 		<button class="button open" onclick={(_) => (reduced = false)}> ? </button>
@@ -60,8 +72,8 @@
 		justify-content: space-between;
 		position: fixed;
 		bottom: 0.5em;
-		right: 8.5em;
-		left: 0.5em;
+		right: calc(8.5em + 8px);
+		left: 8px;
 
 		z-index: 15;
 	}
@@ -95,7 +107,7 @@
 
 	.snail {
 		bottom: 1em;
-		right: 0em;
+		right: 8px;
 		position: fixed;
 		transition: all 0.5s ease-in;
 		animation: snail-animation 10s infinite linear;
@@ -110,7 +122,7 @@
 
 	.snail-text {
 		transition: all 0.5s ease-in;
-		margin: 0 1em 1em 1em;
+		margin: 0 1em 1em 0;
 		width: 100%;
 		position: relative;
 	}
@@ -142,11 +154,10 @@
 
 	.snail-text:after,
 	.snail-text:before {
-		content: ' ';
 		position: absolute;
 		width: 2em;
 		height: 0.5em;
-		right: -2em;
+		right: calc(-2em + 2px);
 	}
 	.snail-text:after {
 		bottom: 5em;
