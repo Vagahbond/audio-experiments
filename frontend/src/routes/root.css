@@ -72,6 +72,10 @@ h6 {
   color: var(--yellow);
 }
 
+/*****************************************************************************/
+/*                              CONTROLS                                     */
+/*****************************************************************************/
+
 .button:disabled {
   color: var(--subtext0);
 }
@@ -114,5 +118,51 @@ h6 {
   background-color: var(--surface0);
 
   padding: 1em;
+
+}
+
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 1em;
+  background: var(--text);
+  outline: none;
+  /* border: 5px solid lawngreen; */
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.8) 0px 3px 3px inset;
+
+}
+
+
+/* for chrome/safari */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1em;
+  height: 2em;
+  background: var(--surface1);
+  cursor: pointer;
+  border: none;
+  /* border: 5px solid lawngreen; */
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 4px,
+    rgba(0, 0, 0, 0.2) 0px 7px 13px -3px,
+    rgba(0, 0, 0, 0.1) 0px -3px 0px inset;
+}
+
+/* for firefox */
+.slider::-moz-range-thumb {
+  border: none;
+  width: 1em;
+  height: 2em;
+  background: var(--surface1);
+  cursor: pointer;
+  /* border: 5px solid lawngreen; */
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.3) 1px 2px 4px,
+    rgba(0, 0, 0, 0.2) 0px 7px 13px -3px,
+    rgba(0, 0, 0, 0.1) 0px -3px 0px inset;
+
 
 }

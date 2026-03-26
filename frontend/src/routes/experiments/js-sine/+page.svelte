@@ -2,7 +2,7 @@
 	import Snailwisdom from '$lib/components/snailwisdom.svelte';
 	import { onMount } from 'svelte';
 
-	let audio: HTMLAudioElement;
+	let osc: OscillatorNode | undefined;
 
 	let context: AudioContext | undefined = $state();
 
@@ -13,20 +13,22 @@
 	onMount(() => {
 		context = new AudioContext();
 
-		const track = context.createMediaElementSource(audio);
+		osc = context.createOscillator();
 
 		gainNode = context.createGain();
 
-		track.connect(gainNode).connect(context.destination);
+		gainNode.connect(context.destination);
+
+		osc?.start();
 	});
 
 	function play() {
-		audio.play();
+		if (gainNode) osc?.connect(gainNode);
 		playState = true;
 	}
 
 	function stop() {
-		audio.pause();
+		if (gainNode) osc?.disconnect(gainNode);
 		playState = false;
 	}
 
@@ -36,16 +38,24 @@
 		}
 		gainNode.gain.value = value;
 	}
+
+	function changeFrequency(value: number) {
+		if (!osc) {
+			return;
+		}
+		osc.frequency.value = value;
+	}
 </script>
 
 <div class="container box">
 	<h3>Pure JS audio generation</h3>
 	<div class="controls">
-		<audio bind:this={audio} src="/mycooltrack.mp3"></audio>
 		<button disabled={playState} onclick={play} class="button">Play</button>
 		<button disabled={!playState} onclick={stop} class="button">Stop</button>
 		<!-- volume slider -->
+		<span>Volume</span>
 		<input
+			id="volume"
 			class="slider"
 			type="range"
 			min="0.0"
@@ -54,6 +64,19 @@
 			defaultvalue="1.0"
 			oninput={(event: any) => {
 				changeVolume(event.target.valueAsNumber);
+			}}
+		/>
+		<span>Frequency</span>
+		<input
+			id="frequency"
+			class="slider"
+			type="range"
+			min="20"
+			max="16000"
+			step="1"
+			defaultvalue="440"
+			oninput={(event: any) => {
+				changeFrequency(event.target.valueAsNumber);
 			}}
 		/>
 	</div>
@@ -76,35 +99,4 @@
 		margin: 1em;
 	}
 
-	.slider {
-		color: var(--text);
-		background-color: var(--base);
-		border-radius: 0.5em;
-	}
-
-	.slider::-webkit-slider-thumb {
-		-webkit-appearance: none;
-		appearance: none;
-		width: 1em;
-		height: 1em;
-		border-radius: 0.5em;
-		background: var(--text);
-		cursor: pointer;
-	}
-
-	.slider::-moz-range-thumb {
-		width: 1em;
-		height: 1em;
-		border-radius: 0.5em;
-		background: var(--overlay0);
-		cursor: pointer;
-	}
-
-	.slider::-ms-thumb {
-		width: 1em;
-		height: 1em;
-		border-radius: 0.5em;
-		background: var(--overlay0);
-		cursor: pointer;
-	}
 </style>
