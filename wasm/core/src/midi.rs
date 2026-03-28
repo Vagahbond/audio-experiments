@@ -2,6 +2,22 @@ fn get_semitone_ratio() -> f64 {
     2.0_f64.powf(1.0_f64 / 12.0_f64)
 }
 
+fn get_c_0() -> f64 {
+    /* find Middle C, three semitones above low A = 220 */
+    let c5 = 220.0_f64 * get_semitone_ratio().powf(3.0);
+
+    /* Note 0 is C, 5 octaves bel-ow Mlddle C */
+    c5 * 0.5_f64.powf(5.0)
+}
+
+pub fn freq_to_midi(freq: f64) -> u8 {
+    let semitone_ratio = get_semitone_ratio();
+
+    let frac_midi = (freq / get_c_0()).ln() / semitone_ratio.ln();
+
+    frac_midi.round() as u8
+}
+
 pub fn midi_to_freq(key: u8) -> f64 {
     let semitone_ratio = get_semitone_ratio();
 
@@ -87,5 +103,135 @@ mod tests {
         assert_freq(64, 329.63); // E4
         assert_freq(76, 659.26); // E5
         assert_freq(93, 1760.00); // A6
+    }
+
+    // --- Exact standard pitches ---
+
+    #[test]
+    fn test_a4_440hz() {
+        // A4 = MIDI 69
+        assert_eq!(freq_to_midi(440.0), 69);
+    }
+
+    #[test]
+    fn test_middle_c_c4() {
+        // C4 = MIDI 60
+        assert_eq!(freq_to_midi(261.626), 60);
+    }
+
+    #[test]
+    fn test_c0_is_midi_0() {
+        // C0 is the reference note; should map to MIDI 0
+        assert_eq!(freq_to_midi(get_c_0()), 0);
+    }
+
+    #[test]
+    fn test_a0() {
+        // A0 = MIDI 21 (~27.5 Hz)
+        assert_eq!(freq_to_midi(27.5), 21);
+    }
+
+    #[test]
+    fn test_c8() {
+        // C8 = MIDI 108 (~4186 Hz), highest note on a standard piano
+        assert_eq!(freq_to_midi(4186.0), 108);
+    }
+
+    // --- Semitone intervals from A4 ---
+
+    #[test]
+    fn test_one_octave_up_from_a4() {
+        // A5 = MIDI 81, double the frequency
+        assert_eq!(freq_to_midi(880.0), 81);
+    }
+
+    #[test]
+    fn test_one_octave_down_from_a4() {
+        // A3 = MIDI 57, half the frequency
+        assert_eq!(freq_to_midi(220.0), 57);
+    }
+
+    // --- Rounding behaviour ---
+
+    #[test]
+    fn test_rounds_to_nearest_below() {
+        // Slightly flat of A4 still rounds to 69
+        assert_eq!(freq_to_midi(438.0), 69);
+    }
+
+    #[test]
+    fn test_rounds_to_nearest_above() {
+        // Slightly sharp of A4 still rounds to 69
+        assert_eq!(freq_to_midi(442.0), 69);
+    }
+
+    // --- Frequencies that should NOT match a given MIDI note ---
+
+    #[test]
+    fn test_not_a4_when_too_flat() {
+        // More than a quarter-tone flat of A4 — should resolve to G#4 (68)
+        let g_sharp_4 = 415.305;
+        assert_ne!(freq_to_midi(g_sharp_4 + 1.0), 69);
+        assert_eq!(freq_to_midi(g_sharp_4 + 1.0), 68);
+    }
+
+    #[test]
+    fn test_not_a4_when_too_sharp() {
+        // More than a quarter-tone sharp of A4 — should resolve to A#4 (70)
+        let a_sharp_4 = 466.164;
+        assert_ne!(freq_to_midi(a_sharp_4 - 1.0), 69);
+        assert_eq!(freq_to_midi(a_sharp_4 - 1.0), 70);
+    }
+
+    #[test]
+    fn test_not_middle_c_when_sharp() {
+        // C#4 (MIDI 61) should not map to C4 (60)
+        assert_ne!(freq_to_midi(277.183), 60);
+        assert_eq!(freq_to_midi(277.183), 61);
+    }
+
+    #[test]
+    fn test_not_middle_c_when_flat() {
+        // B3 (MIDI 59) should not map to C4 (60)
+        assert_ne!(freq_to_midi(246.942), 60);
+        assert_eq!(freq_to_midi(246.942), 59);
+    }
+
+    #[test]
+    fn test_not_c0_when_one_semitone_up() {
+        // C#0 (MIDI 1) should not map to MIDI 0
+        let c_sharp_0 = get_c_0() * get_semitone_ratio();
+        assert_ne!(freq_to_midi(c_sharp_0), 0);
+        assert_eq!(freq_to_midi(c_sharp_0), 1);
+    }
+
+    #[test]
+    fn test_adjacent_notes_are_distinct() {
+        // Every semitone from MIDI 60–72 should map to a unique value —
+        // no two adjacent exact frequencies should collapse to the same note
+        let c4_midi = 60u8;
+        let c4_freq = get_c_0() * get_semitone_ratio().powi(c4_midi as i32);
+
+        for semitone in 0..12 {
+            let freq = c4_freq * get_semitone_ratio().powi(semitone);
+            let result = freq_to_midi(freq);
+            assert_eq!(
+                result,
+                c4_midi + semitone as u8,
+                "Expected MIDI {} for semitone offset {}, got {}",
+                c4_midi + semitone as u8,
+                semitone,
+                result
+            );
+        }
+    }
+
+    #[test]
+    fn test_rounds_up_at_boundary() {
+        // Exactly halfway between A4 (69) and A#4 (70) should round to 70
+        let a4 = 440.0_f64;
+        let a_sharp_4 = a4 * get_semitone_ratio();
+        let midpoint = (a4 + a_sharp_4) / 2.0;
+        assert_eq!(freq_to_midi(midpoint), 70);
     }
 }

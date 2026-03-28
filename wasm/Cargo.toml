@@ -1,5 +1,6 @@
 [workspace]
 members = [
     "midi2freq",
+    "freq2midi",
 ]
 resolver = "3"

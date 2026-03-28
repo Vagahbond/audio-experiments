@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Experiment from '$lib/components/experiment.svelte';
 	import Snailwisdom from '$lib/components/snailwisdom.svelte';
 </script>
 
@@ -6,14 +7,21 @@
 	<div class="experiments box">
 		<h3>Experiements</h3>
 		<div class="cards">
-			<a class="card box" href="/experiments/midi2freq">
-				<h5>Midi to frequency</h5>
-				<p>Transform a midi note's index into a frequency.</p></a
-			>
-			<a class="card box" href="/experiments/js-sine">
-				<h5>Pure JS audio generation</h5>
-				<p>Generate a sine wave with pure JS.</p>
-			</a>
+			<Experiment
+				name="Midi to frequency"
+				slug="midi2freq"
+				desc="Transform a midi note's index into a frequency."
+			/>
+			<Experiment
+				name="Pure JS audio generation"
+				slug="js-sine"
+				desc="Generate a sine wave with pure JS."
+			/>
+			<Experiment
+				name="Freq to midi"
+				slug="freq2midi"
+				desc="Adjust a freq to the closest midi note."
+			/>
 		</div>
 	</div>
 </div>
@@ -41,19 +49,5 @@
 		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 		gap: 1em;
 		padding: 1em;
-	}
-
-	.card {
-		transition: all 0.2s ease-in-out;
-		background-color: var(--surface0);
-		border-radius: 0.5em;
-		color: var(--text);
-		text-decoration: none;
-		cursor: pointer;
-	}
-
-	.card:hover {
-		transform: translate(0.2em, 0.2em);
-		box-shadow: none;
 	}
 </style>

@@ -28,6 +28,7 @@
 	}
 
 	.rack {
+		min-width: 10em;
 		margin: 1em;
 		width: min-content;
 		background-color: var(--surface0);
