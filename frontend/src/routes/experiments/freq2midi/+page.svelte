@@ -82,7 +82,7 @@
 		/>
 	</div>
 	<div class="output box">
-		<span> Frequency: {frequency}Hz</span> <br />
+		<span> Frequency: {frequency.toFixed(2)}Hz</span> <br />
 		<span> Closest midi note is {midi}</span><br />
 
 		<span> Its frequency is {corrected_frequency.toFixed(2)}</span><br />
