@@ -13,4 +13,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 core = { version = "0.1.0", path = "../core" }
-wasm-bindgen = "0.2.114"
+wasm-bindgen = "=0.2.114"

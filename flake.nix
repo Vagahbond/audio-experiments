@@ -33,19 +33,14 @@
         };
       });
 
-      # packages = forAllSystems (pkgs: {
-      #   cli = pkgs.rustPlatform.buildRustPackage {
-      #     name = "charpente";
-      #     src = ./.;
-      #     cargoLock = {
-      #       lockFile = ./Cargo.lock;
-      #     };
-      #     buildInputs = with pkgs; [
-      #       cargo
-      #       rustc
-      #       rustfmt
-      #     ];
-      #   };
-      # });
+      packages = forAllSystems (pkgs: rec {
+        wasm = pkgs.callPackage ./nix/packages/wasm.nix { };
+
+        frontend = pkgs.callPackage ./nix/packages/frontend.nix {
+          inherit wasm;
+        };
+        default = frontend;
+
+      });
     };
 }
