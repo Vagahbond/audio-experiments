@@ -2,7 +2,7 @@ fn get_semitone_ratio() -> f64 {
     2.0_f64.powf(1.0_f64 / 12.0_f64)
 }
 
-fn get_c_0() -> f64 {
+fn get_midi_0() -> f64 {
     /* find Middle C, three semitones above low A = 220 */
     let c5 = 220.0_f64 * get_semitone_ratio().powf(3.0);
 
@@ -10,10 +10,15 @@ fn get_c_0() -> f64 {
     c5 * 0.5_f64.powf(5.0)
 }
 
+fn get_midi_0_string_length() -> f64 {
+    // 660cm is the sounding length of a string playing C4.
+    660.0_f64 * 2.0_f64.powf(5.0)
+}
+
 pub fn freq_to_midi(freq: f64) -> u8 {
     let semitone_ratio = get_semitone_ratio();
 
-    let frac_midi = (freq / get_c_0()).ln() / semitone_ratio.ln();
+    let frac_midi = (freq / get_midi_0()).ln() / semitone_ratio.ln();
 
     frac_midi.round() as u8
 }
@@ -28,13 +33,32 @@ pub fn midi_to_freq(key: u8) -> f64 {
 
     let mut freq = 440.0;
 
-    if diff < 0 {
-        freq /= (1.0 / semitone_ratio).powf(diff as f64);
-    } else {
-        freq *= semitone_ratio.powf(diff as f64);
-    }
+    freq /= (1.0 / semitone_ratio).powf(diff as f64);
 
     return freq;
+}
+
+pub fn string_length2midi(length: f64) -> i16 {
+    let semitone_ratio = get_semitone_ratio();
+
+    //let frac_midi = 1.0/semitone_ratio.ln() / ( get_midi_0_string_length()/length).ln()  ;
+    let frac_midi = (get_midi_0_string_length() / length).ln() / semitone_ratio.ln();
+
+    return  frac_midi.round()as i16   ;
+}
+
+pub fn string_midi2length(midi: u8) -> f64 {
+    let semitone_ratio = get_semitone_ratio();
+
+    let c4 = 60;
+
+    let diff: i16 = midi as i16 - c4;
+
+    let mut len = 660.0;
+
+    len /= semitone_ratio.powf(diff as f64);
+
+    len
 }
 
 #[cfg(test)]
@@ -122,7 +146,7 @@ mod tests {
     #[test]
     fn test_c0_is_midi_0() {
         // C0 is the reference note; should map to MIDI 0
-        assert_eq!(freq_to_midi(get_c_0()), 0);
+        assert_eq!(freq_to_midi(get_midi_0()), 0);
     }
 
     #[test]
@@ -200,7 +224,7 @@ mod tests {
     #[test]
     fn test_not_c0_when_one_semitone_up() {
         // C#0 (MIDI 1) should not map to MIDI 0
-        let c_sharp_0 = get_c_0() * get_semitone_ratio();
+        let c_sharp_0 = get_midi_0() * get_semitone_ratio();
         assert_ne!(freq_to_midi(c_sharp_0), 0);
         assert_eq!(freq_to_midi(c_sharp_0), 1);
     }
@@ -210,7 +234,7 @@ mod tests {
         // Every semitone from MIDI 60–72 should map to a unique value —
         // no two adjacent exact frequencies should collapse to the same note
         let c4_midi = 60u8;
-        let c4_freq = get_c_0() * get_semitone_ratio().powi(c4_midi as i32);
+        let c4_freq = get_midi_0() * get_semitone_ratio().powi(c4_midi as i32);
 
         for semitone in 0..12 {
             let freq = c4_freq * get_semitone_ratio().powi(semitone);
@@ -233,5 +257,105 @@ mod tests {
         let a_sharp_4 = a4 * get_semitone_ratio();
         let midpoint = (a4 + a_sharp_4) / 2.0;
         assert_eq!(freq_to_midi(midpoint), 70);
+    }
+
+    // --- string_midi2length tests ---
+
+    #[test]
+    fn test_string_midi2length_c4() {
+        let len = string_midi2length(60);
+        assert!(
+            (len - 660.0).abs() < EPSILON,
+            "expected 660.0 and got {}",
+            len
+        );
+    }
+
+    #[test]
+    fn test_string_midi2length_c5() {
+        let len = string_midi2length(72);
+        assert!(
+            (len - 330.0).abs() < EPSILON,
+            "expected 330.0 and got {}",
+            len
+        );
+    }
+
+    #[test]
+    fn test_string_midi2length_c3() {
+        let len = string_midi2length(48);
+        assert!(
+            (len - 1320.0).abs() < EPSILON,
+            "expected 1320.0 and got {}",
+            len
+        );
+    }
+
+    // --- string_length2midi tests ---
+
+    #[test]
+    fn test_string_length2midi_660_is_high() {
+        let result = string_length2midi(660.0);
+        assert_eq!(result, 60, "expected 60 and got {}", result);
+    }
+
+    #[test]
+    fn test_string_length2midi_doubling() {
+        let res = string_length2midi(1320.0);
+        assert_eq!(res, 48, "expected 48 and got {}", res);
+    }
+
+    #[test]
+    fn test_string_length2midi_halfing() {
+        let res = string_length2midi(330.0);
+        assert_eq!(res, 72, "expected 72 and got {}", res);
+    }
+
+    // --- string_length2midi: semitone steps around C4 ---
+
+    #[test]
+    fn test_string_length2midi_one_semitone_shorter_is_higher() {
+        // C#4 = MIDI 61, string length ~622.957 cm (shorter than C4's 660 cm)
+        let res = string_length2midi(622.957);
+        assert_eq!(res, 61, "expected 61 (C#4) and got {}", res);
+    }
+
+    #[test]
+    fn test_string_length2midi_one_semitone_longer_is_lower() {
+        // B3 = MIDI 59, string length ~699.246 cm (longer than C4's 660 cm)
+        let res = string_length2midi(699.246);
+        assert_eq!(res, 59, "expected 59 (B3) and got {}", res);
+    }
+
+    // --- string_length2midi: named notes across multiple octaves ---
+
+    #[test]
+    fn test_string_length2midi_c1() {
+        // C1 = MIDI 24, string length 5280.0 cm
+        let res = string_length2midi(5280.0);
+        assert_eq!(res, 24, "expected 24 (C1) and got {}", res);
+    }
+
+    #[test]
+    fn test_string_length2midi_c2() {
+        // C2 = MIDI 36, string length 2640.0 cm
+        let res = string_length2midi(2640.0);
+        assert_eq!(res, 36, "expected 36 (C2) and got {}", res);
+    }
+
+    // --- string_length2midi: non-octave intervals ---
+
+    #[test]
+    fn test_string_length2midi_g4() {
+        // G4 = MIDI 67, a perfect fifth above C4 (~440.497 cm)
+        let res = string_length2midi(440.497);
+        assert_eq!(res, 67, "expected 67 (G4) and got {}", res);
+    }
+
+    #[test]
+    fn test_string_length2midi_f3() {
+        // F3 = MIDI 53, a perfect fifth below C4 (~988.883 cm)
+        let res = string_length2midi(988.883);
+        assert_eq!(res, 53, "expected 53 (F3) and got {}", res);
     }
 }
