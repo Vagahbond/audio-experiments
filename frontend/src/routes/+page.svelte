@@ -14,13 +14,23 @@
 			/>
 			<Experiment
 				name="Pure JS audio generation"
-				slug="js-sine"
+				slug="js_sine"
 				desc="Generate a sine wave with pure JS."
 			/>
 			<Experiment
 				name="Freq to midi"
 				slug="freq2midi"
 				desc="Adjust a freq to the closest midi note."
+			/>
+			<Experiment
+				name="Freq to midi"
+				slug="freq2midi"
+				desc="Adjust a freq to the closest midi note."
+			/>
+			<Experiment
+				name="String lengh"
+				slug="string_length"
+				desc="Simulate a string, shortening and extending it to change its noise frequency."
 			/>
 		</div>
 	</div>
@@ -46,7 +56,7 @@
 
 	.cards {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 		gap: 1em;
 		padding: 1em;
 	}

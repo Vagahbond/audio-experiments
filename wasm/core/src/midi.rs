@@ -43,7 +43,7 @@ pub fn string_length2midi(length: f64) -> u8 {
 
     let frac_midi = (get_midi_0_string_length() / length).ln() / semitone_ratio.ln();
 
-    return  frac_midi.round() as u8;
+    return frac_midi.round() as u8;
 }
 
 pub fn string_midi2length(midi: u8) -> f64 {
@@ -64,8 +64,8 @@ pub fn string_length2freq(length: f64) -> f64 {
     let midi_0_len = get_midi_0_string_length();
     let midi_0_freq = get_midi_0();
 
-    midi_0_freq * (midi_0_len/length)
-} 
+    midi_0_freq * (midi_0_len / length)
+}
 
 #[cfg(test)]
 mod tests {
@@ -293,6 +293,26 @@ mod tests {
         assert!(
             (len - 1320.0).abs() < EPSILON,
             "expected 1320.0 and got {}",
+            len
+        );
+    }
+
+    #[test]
+    fn test_string_midi2length_max_midi() {
+        let len = string_midi2length(128);
+        assert!(
+            (len - 13.0).abs() < EPSILON,
+            "expected 13.0 and got {}",
+            len
+        );
+    }
+
+    #[test]
+    fn test_string_midi2length_min_midi() {
+        let len = string_midi2length(0);
+        assert!(
+            (len - 21120.0).abs() < EPSILON,
+            "expected 21120.0 and got {}",
             len
         );
     }

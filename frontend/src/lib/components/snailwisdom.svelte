@@ -91,6 +91,10 @@
 		z-index: 10;
 	}
 
+	.reduced {
+		height: 0;
+	}
+
 	.reduced .open {
 		display: block;
 	}
