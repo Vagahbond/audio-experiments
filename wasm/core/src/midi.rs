@@ -38,13 +38,12 @@ pub fn midi_to_freq(key: u8) -> f64 {
     return freq;
 }
 
-pub fn string_length2midi(length: f64) -> i16 {
+pub fn string_length2midi(length: f64) -> u8 {
     let semitone_ratio = get_semitone_ratio();
 
-    //let frac_midi = 1.0/semitone_ratio.ln() / ( get_midi_0_string_length()/length).ln()  ;
     let frac_midi = (get_midi_0_string_length() / length).ln() / semitone_ratio.ln();
 
-    return  frac_midi.round()as i16   ;
+    return  frac_midi.round() as u8;
 }
 
 pub fn string_midi2length(midi: u8) -> f64 {
@@ -60,6 +59,13 @@ pub fn string_midi2length(midi: u8) -> f64 {
 
     len
 }
+
+pub fn string_length2freq(length: f64) -> f64 {
+    let midi_0_len = get_midi_0_string_length();
+    let midi_0_freq = get_midi_0();
+
+    midi_0_freq * (midi_0_len/length)
+} 
 
 #[cfg(test)]
 mod tests {
@@ -289,6 +295,125 @@ mod tests {
             "expected 1320.0 and got {}",
             len
         );
+    }
+
+    // --- string_length2freq tests ---
+
+    #[test]
+    fn test_string_length2freq_c4() {
+        // C4 = 660 cm → 261.63 Hz
+        let freq = string_length2freq(660.0);
+        assert!(
+            (freq - 261.626).abs() < EPSILON,
+            "expected ~261.63 Hz for C4 (660 cm), got {:.4}",
+            freq
+        );
+    }
+
+    #[test]
+    fn test_string_length2freq_c3() {
+        // C3 = 1320 cm (double C4) → 130.81 Hz (half C4)
+        let freq = string_length2freq(1320.0);
+        assert!(
+            (freq - 130.813).abs() < EPSILON,
+            "expected ~130.81 Hz for C3 (1320 cm), got {:.4}",
+            freq
+        );
+    }
+
+    #[test]
+    fn test_string_length2freq_c5() {
+        // C5 = 330 cm (half C4) → 523.25 Hz (double C4)
+        let freq = string_length2freq(330.0);
+        assert!(
+            (freq - 523.251).abs() < EPSILON,
+            "expected ~523.25 Hz for C5 (330 cm), got {:.4}",
+            freq
+        );
+    }
+
+    #[test]
+    fn test_string_length2freq_c0() {
+        // C0 = 21120 cm (the reference length) → 8.176 Hz
+        let freq = string_length2freq(21120.0);
+        assert!(
+            (freq - 8.176).abs() < EPSILON,
+            "expected ~8.176 Hz for C0 (21120 cm), got {:.4}",
+            freq
+        );
+    }
+
+    #[test]
+    fn test_string_length2freq_a4() {
+        // A4 = ~392.438 cm → 440.0 Hz
+        let semitone_ratio = get_semitone_ratio();
+        let a4_len = 660.0 / semitone_ratio.powi(9); // 9 semitones above C4
+        let freq = string_length2freq(a4_len);
+        assert!(
+            (freq - 440.0).abs() < EPSILON,
+            "expected 440.0 Hz for A4 ({:.4} cm), got {:.4}",
+            a4_len,
+            freq
+        );
+    }
+
+    #[test]
+    fn test_string_length2freq_g4() {
+        // G4 = ~440.497 cm → 391.995 Hz (perfect fifth above C4)
+        let semitone_ratio = get_semitone_ratio();
+        let g4_len = 660.0 / semitone_ratio.powi(7); // 7 semitones above C4
+        let freq = string_length2freq(g4_len);
+        assert!(
+            (freq - 391.995).abs() < EPSILON,
+            "expected ~391.995 Hz for G4 ({:.4} cm), got {:.4}",
+            g4_len,
+            freq
+        );
+    }
+
+    #[test]
+    fn test_string_length2freq_longer_is_lower() {
+        // Fundamental physics: a longer string always produces a lower frequency
+        let freq_short = string_length2freq(330.0);
+        let freq_long = string_length2freq(1320.0);
+        assert!(
+            freq_short > freq_long,
+            "shorter string ({} Hz) should have higher freq than longer string ({} Hz)",
+            freq_short,
+            freq_long
+        );
+    }
+
+    #[test]
+    fn test_string_length2freq_doubling_halves_freq() {
+        // Doubling the string length should halve the frequency (one octave down)
+        let freq_base = string_length2freq(660.0);
+        let freq_double = string_length2freq(1320.0);
+        assert!(
+            (freq_double - freq_base / 2.0).abs() < EPSILON,
+            "doubling length should halve frequency: expected {:.4}, got {:.4}",
+            freq_base / 2.0,
+            freq_double
+        );
+    }
+
+    #[test]
+    fn test_string_length2freq_roundtrip() {
+        // For notes in a 3-octave range, string_length2freq(string_midi2length(n))
+        // should equal midi_to_freq(n).
+        for midi in 36u8..=84 {
+            let len = string_midi2length(midi);
+            let freq_from_len = string_length2freq(len);
+            let freq_from_midi = midi_to_freq(midi);
+            assert!(
+                (freq_from_len - freq_from_midi).abs() < EPSILON,
+                "round-trip failed for MIDI {}: length {:.4} cm -> {:.4} Hz, expected {:.4} Hz",
+                midi,
+                len,
+                freq_from_len,
+                freq_from_midi
+            );
+        }
     }
 
     // --- string_length2midi tests ---
