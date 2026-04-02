@@ -104,9 +104,11 @@
 		background: repeating-linear-gradient(
 			90deg,
 			var(--overlay2),
-			var(--overlay2) 0.2em,
-			transparent 0.2em,
-			transparent 9.8em
+			var(--overlay2) 0.1em,
+			transparent 0.1em,
+			transparent 9.9em,
+			var(--overlay2) 9.9em,
+			var(--overlay2) 10em
 		);
 		z-index: 1;
 	}
@@ -124,7 +126,7 @@
 			var(--overlay2) 4.9em,
 			var(--overlay2) 5.1em,
 			transparent 5.1em,
-			transparent 9.9em
+			transparent 10em
 		);
 		z-index: 1;
 	}

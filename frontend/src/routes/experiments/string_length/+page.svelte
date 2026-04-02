@@ -83,8 +83,11 @@
 </div>
 
 <Snailwisdom
-	title="Frequency to midi note!"
+	title="String length to midi note ! "
 	message={`
+  Assuming that a string vibrates at A4's frequency if it is 660CM, we can then infer a frequency to any length for this string ! 
+  It works oposite to the frequency in relation to the midi value: The higher the midi value, the smaller the string, and the higher the frequency. 
+Other than that, nothing changes, so the half-tone coefficient we have been using still applies here, it just has to be applied the other way around. Sweet! This exercise is an excuse for me to create a nice string component for later, and prepare for the bending simulation !
   `}
 />
 
