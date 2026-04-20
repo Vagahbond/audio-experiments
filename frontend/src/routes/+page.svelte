@@ -32,6 +32,12 @@
 				slug="string_length"
 				desc="Simulate a string, shortening and extending it to change its noise frequency."
 			/>
+
+			<Experiment
+				name="Bend amount"
+				slug="bend_amount"
+				desc="Given a frequency, calculate the bend amount relative to the closest MIDI note."
+			/>
 		</div>
 	</div>
 </div>

@@ -2,7 +2,8 @@
 members = [
     "midi2freq",
     "freq2midi",
-    "string_length"
+    "string_length",
+    "bend_amount"
 ]
 resolver = "3"
 

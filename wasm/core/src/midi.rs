@@ -67,6 +67,31 @@ pub fn string_length2freq(length: f64) -> f64 {
     midi_0_freq * (midi_0_len / length)
 }
 
+pub fn bend_amount(freq: f64) -> f64 {
+    let midi = freq_to_midi(freq);
+
+    let corrected_freq = midi_to_freq(midi);
+
+    if freq == corrected_freq {
+        return 0.0;
+    }
+
+    let mut up_freq  = corrected_freq;
+    let mut down_freq =   corrected_freq;
+
+    if corrected_freq < freq {
+        
+        up_freq  = midi_to_freq(midi + 1);
+    } else {
+        down_freq  = midi_to_freq(midi - 1);
+    }
+
+     (corrected_freq - freq) / (up_freq - down_freq)
+}    
+
+    
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -503,4 +528,26 @@ mod tests {
         let res = string_length2midi(988.883);
         assert_eq!(res, 53, "expected 53 (F3) and got {}", res);
     }
+
+    // --- bend_amount ---
+     fn assert_bend_amount(freq: f64, expected: f64) {
+        let result = bend_amount(freq);
+        assert!(
+            (result - expected).abs() < EPSILON,
+            "Frequecy: {} Hz: expected {:.2} %, got {:.2} %",
+            freq,
+            expected,
+            result
+        );
+    }
+
+
+
+    #[test]
+    fn test_bend_amount_430() {
+        let freq = 430.0;
+        assert_bend_amount(freq, 0.405);
+
+    }
+
 }
