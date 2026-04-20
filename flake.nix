@@ -29,6 +29,9 @@
             rustfmt
             nodejs
             wasm-pack
+            wasm-bindgen-cli_0_2_114
+            binaryen
+            tree
           ];
         };
       });

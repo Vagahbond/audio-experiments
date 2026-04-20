@@ -41,6 +41,7 @@
 		"vitest-browser-svelte": "^2.0.2"
 	},
 	"dependencies": {
+		"bend_amount": "file:../wasm/pkg/bend_amount",
 		"freq2midi": "file:../wasm/pkg/freq2midi",
 		"midi2freq": "file:../wasm/pkg/midi2freq",
 		"string_length": "file:../wasm/pkg/string_length"

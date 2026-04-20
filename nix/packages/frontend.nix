@@ -19,6 +19,6 @@ buildNpmPackage {
     cp -r ./build/* $out/
   '';
 
-  npmDepsHash = "sha256-CxJcHNy9cgFUZcvVwOAX6U13qdqPOX5bunzuf/2b8z0=";
+  npmDepsHash = "sha256-h7VGXwNT8YRD/W5obaec+x6NaP1FAF/tR/li+kGga10=";
 
 }

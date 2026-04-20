@@ -14,9 +14,6 @@ rustPlatform.buildRustPackage {
     lockFile = ../../wasm/Cargo.lock;
   };
 
-  # buildInputs = with pkgs; [
-  # ];
-
   nativeBuildInputs = with pkgs; [
     # wasm-bindgen-cli
     wasm-bindgen-cli_0_2_114

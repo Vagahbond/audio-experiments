@@ -86,7 +86,7 @@ pub fn bend_amount(freq: f64) -> f64 {
         down_freq  = midi_to_freq(midi - 1);
     }
 
-     (corrected_freq - freq) / (up_freq - down_freq)
+     (freq - corrected_freq)  / (up_freq - down_freq)
 }    
 
     
@@ -96,7 +96,7 @@ pub fn bend_amount(freq: f64) -> f64 {
 mod tests {
     use super::*;
 
-    const EPSILON: f64 = 0.1; // Hz tolerance for float comparison
+    const EPSILON: f64 = 0.01; // Hz tolerance for float comparison
 
     fn assert_freq(midi: u8, expected: f64) {
         let result = midi_to_freq(midi);
@@ -544,10 +544,21 @@ mod tests {
 
 
     #[test]
-    fn test_bend_amount_430() {
+    fn test_bend_amount_bend_down() {
         let freq = 430.0;
-        assert_bend_amount(freq, 0.405);
+        assert_bend_amount(freq, -0.405);
+    }
 
+    #[test]
+    fn test_bend_amount_bend_up() {
+        let freq = 420.0;
+        assert_bend_amount(freq, 0.19);
+    }
+
+    #[test]
+    fn test_bend_amount_no_bend_approximate() {
+        let freq = 440.5;
+        assert_bend_amount(freq, 0.01);
     }
 
 }
